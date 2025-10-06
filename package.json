@@ -49,11 +49,11 @@
     "url": "git+https://github.com/ignromanov/big-decimal.git"
   },
   "devDependencies": {
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.7.0",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "terser": "^5.43.1",
-    "typescript": "~5.9.2",
+    "typescript": "~5.9.3",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
   },
