@@ -80,12 +80,16 @@ describe("fitFinite", () => {
   });
 
   it("single-rounds when both digit and quantum limits apply", () => {
-    // 40 significant digits AND exponent below the quantum floor: one combined
-    // drop of 38 (not digit-drop then quantum-drop) lands on a finite subnormal.
-    const c = 10n ** 39n + 7n; // 1000…0007 (40 digits, no trailing zeros)
-    const out = fitFinite(1, c, -6214, "halfEven") as Extract<Dec, { kind: "finite" }>;
-    expect(out.kind).toBe("finite");
-    expect(out.exponent).toBeGreaterThanOrEqual(-6176);
+    // 35 significant digits AND exponent below the quantum floor, so both limits
+    // apply (digit-drop 1, quantum-drop 3 → combined single drop of 3). One combined
+    // rounding of 1000…001495 examines 495 < 500 → rounds DOWN → coefficient 10^31+1.
+    // A buggy two-step (round to 34 digits first: the trailing …495 ties 9 upward to
+    // …150, then quantum-round the resulting …15 up) would yield 10^31+2 — one ulp
+    // higher. Pinning the exact single-round result guards against that regression.
+    const c = 10n ** 34n + 1495n; // 1000…001495 (35 digits)
+    expect(fitFinite(1, c, -6179, "halfEven")).toEqual({
+      kind: "finite", sign: 1, coefficient: 10n ** 31n + 1n, exponent: -6176,
+    });
   });
 
   it("zero coefficient yields signed zero", () => {
