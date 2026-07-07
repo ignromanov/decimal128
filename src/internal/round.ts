@@ -84,6 +84,10 @@ export function fitFinite(sign: Sign, coeff: bigint, exp: number, mode: Rounding
   return { kind: "finite", sign, coefficient: coeff, exponent: exp };
 }
 
+export function resolveMode(options?: { roundingMode?: RoundingMode }): RoundingMode {
+  return options?.roundingMode ?? DEFAULT_ROUNDING;
+}
+
 /** Round a Dec so it has at most `maxFractionDigits` digits after the point. */
 export function quantize(d: Dec, maxFractionDigits: number, mode: RoundingMode): Dec {
   if (d.kind !== "finite") return d;
