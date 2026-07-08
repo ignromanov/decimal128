@@ -4,7 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     versioning-strategy: increase
     commit-message:
       prefix: "chore"
@@ -14,18 +14,20 @@ updates:
       - "dependencies"
       - "automerge"
     groups:
+      # Zero runtime deps → every update is a devDep. Batch all non-major
+      # bumps into a single weekly PR that auto-merges on green CI.
       dev-dependencies:
-        patterns:
-          - "@types/*"
-          - "typescript"
-          - "vitest"
-          - "@vitest/*"
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      # Major bumps stay ungrouped → one PR each for human review (e.g. vite 5→7).
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     commit-message:
       prefix: "ci"
       include: "scope"
@@ -33,3 +35,11 @@ updates:
       - "dependencies"
       - "github_actions"
       - "automerge"
+    groups:
+      # One PR for all non-major action bumps; majors reviewed individually.
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
