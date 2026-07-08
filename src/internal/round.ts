@@ -1,4 +1,5 @@
 import { digitCount, pow10 } from "./coefficient";
+import { DecimalError, formatValue } from "../errors";
 import { MAX_COEFF, MAX_DIGITS, MAX_EXP, MIN_QUANTUM } from "./types";
 import type { Dec, Sign } from "./types";
 
@@ -85,7 +86,11 @@ export function fitFinite(sign: Sign, coeff: bigint, exp: number, mode: Rounding
 }
 
 export function resolveMode(options?: { roundingMode?: RoundingMode }): RoundingMode {
-  return options?.roundingMode ?? DEFAULT_ROUNDING;
+  const mode = options?.roundingMode ?? DEFAULT_ROUNDING;
+  if (!ROUNDING_MODES.includes(mode)) {
+    throw new DecimalError(`Invalid roundingMode: ${formatValue(mode)}`, "INVALID_OPTION");
+  }
+  return mode;
 }
 
 /** Round a Dec so it has at most `maxFractionDigits` digits after the point. */

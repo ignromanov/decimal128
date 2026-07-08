@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DecimalError } from "@/index";
 import { add } from "@/ops/add";
 
 describe("add: finite", () => {
@@ -21,6 +22,13 @@ describe("add: finite", () => {
     expect(add("1.005", "0", { maximumFractionDigits: 2 })).toBe("1"); // 1.005 → tie → even 1.00
     expect(add("1.005", "0", { maximumFractionDigits: 2, roundingMode: "halfExpand" })).toBe("1.01");
     expect(add("1.005", "0", { maximumFractionDigits: 2, roundingMode: "trunc" })).toBe("1");
+  });
+
+  it("throws DecimalError (not a raw TypeError) for an invalid roundingMode", () => {
+    // 34-nines + 0.5 forces rounding, so the invalid mode reaches roundCoefficient's compute path
+    expect(() =>
+      add("9999999999999999999999999999999999", "0.5", { roundingMode: "bogus" as any }),
+    ).toThrow(DecimalError);
   });
 });
 
