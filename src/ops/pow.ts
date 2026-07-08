@@ -1,4 +1,4 @@
-import { Decimal, Numeric } from "../decimal";
+import type { Decimal, Numeric } from "../decimal";
 import { DecimalError, formatValue } from "../errors";
 import { finish, toDec } from "../internal/args";
 import type { RoundingOptions } from "../internal/args";

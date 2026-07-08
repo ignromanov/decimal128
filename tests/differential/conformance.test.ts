@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 // so `main: "src/Decimal.mjs"` is the real entry). Aliased to `Decimal128` here to
 // avoid colliding with our own `Decimal` string-brand type and to match IEEE naming.
 import { Decimal as Decimal128 } from "proposal-decimal";
-import { add, divide, equals, isNegative, isZero, multiply, remainder, round, subtract, toString } from "@/index";
+import { add, divide, equals, isNegative, isZero, multiply, remainder, round, subtract, toFixed, toString } from "@/index";
 import { mulberry32, randomDecimalString } from "~/differential/prng";
 
 const CASES = 2000;
@@ -121,6 +121,26 @@ function remainderPrecisionUnreliable(a: string, b: string): boolean {
   return qDigits + bDigits > 34;
 }
 
+/**
+ * BUG C (facet 2) — GDA "Division impossible". Per the General Decimal Arithmetic
+ * Specification, remainder is defined via integer division: when the integer quotient
+ * trunc(x/y) has more than 34 digits (in its exponent-0 integer form), the operation
+ * raises Invalid operation → NaN. Our remainder is GDA-conformant here; the polyfill
+ * never implements this check, returning a rounded finite (or even an exact -0 when the
+ * division happens to be exact, as with remainder(-37e17, -4e-27) → q = 9.25e44, a
+ * 45-digit integer). Those pairs cannot agree. The full integer-digit count differs from
+ * remainderPrecisionUnreliable's SIGNIFICANT-digit count: 9.25e44 is 3 significant but 45
+ * integer digits. Measured via our own divide/round/toFixed (validated elsewhere in this
+ * file), never the remainder SUT. The exact 34/35-digit boundary is pinned by unit tests
+ * in tests/ops/remainder.test.ts.
+ */
+function remainderDivisionImpossible(a: string, b: string): boolean {
+  if (isZero(a) || isZero(b)) return false;
+  const q = round(divide(a, b), { maximumFractionDigits: 0, roundingMode: "trunc" });
+  if (isZero(q)) return false;
+  return toFixed(q, 0).replace("-", "").length > 34;
+}
+
 describe(`differential vs proposal-decimal (${pairs.length} pairs, seed 0xdec14a11)`, () => {
   it("add matches", () => {
     for (const [a, b] of pairs) {
@@ -159,7 +179,8 @@ describe(`differential vs proposal-decimal (${pairs.length} pairs, seed 0xdec14a
 
   it("remainder matches", () => {
     for (const [a, b] of pairs) {
-      if (SUBNORMAL_PAIRS.has(`${a}|${b}`) || remainderPrecisionUnreliable(a, b)) continue; // BUG A, C
+      // BUG A, C (both facets: precision rounding + Division-impossible NaN)
+      if (SUBNORMAL_PAIRS.has(`${a}|${b}`) || remainderPrecisionUnreliable(a, b) || remainderDivisionImpossible(a, b)) continue;
       const expected = refValue((x, y) => x.remainder(y).toString(), a, b);
       if (expected === "throw") continue;
       expect(remainder(a, b), `remainder(${a}, ${b})`).toBe(expected);

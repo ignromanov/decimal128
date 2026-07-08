@@ -1,4 +1,4 @@
-import { Numeric } from "../decimal";
+import type { Numeric } from "../decimal";
 import { toDec } from "../internal/args";
 import { digitCount, pow10 } from "../internal/coefficient";
 import type { Dec, FiniteDec, NanDec } from "../internal/types";

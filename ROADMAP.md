@@ -2,13 +2,13 @@
 
 ## v1 — this release
 
-`@ignromanov/big-decimal` v1 pivots the project to a TS-first, tree-shakeable IEEE 754
+`@ignromanov/decimal128` v1 pivots the project to a TS-first, tree-shakeable IEEE 754
 Decimal128 arithmetic library, API-aligned with the TC39 `Decimal` proposal. Design source of
 truth: `docs/superpowers/specs/2026-07-07-big-decimal-decimal128-pivot-design.md`.
 
 Done-criteria (spec §1), all met at release:
 
-- [x] `pnpm test:coverage` green (24 test files, 342 tests)
+- [x] `pnpm test:coverage` green (25 test files, 359 tests)
 - [x] Differential tests vs the `proposal-decimal` polyfill pass (2000+ seeded input pairs)
 - [x] `pnpm tsc --noEmit` green
 - [x] `pnpm build` produces per-module ESM + CJS + type declarations (`preserveModules`)
@@ -33,10 +33,10 @@ reserved `exports` subpaths) leaves room to add them later without touching the 
 - **`toLocaleString` / `Intl` integration** — locale-aware formatting is a distinct, sizeable
   surface (and a tree-shaking risk if bundled into core formatting) — candidate for a separate
   subpath.
-- **`big-decimal/chain`** — an ergonomic fluent/chained-call façade over the free-function API
+- **`decimal128/chain`** — an ergonomic fluent/chained-call façade over the free-function API
   (`init` + `Proxy`, or a thin subpath class). The free-function core stays the source of truth;
   this would be sugar on top, not a replacement.
-- **`big-decimal/mongodb`** — a bridge to MongoDB's BSON `Decimal128` type. Notably, the BSON
+- **`decimal128/mongodb`** — a bridge to MongoDB's BSON `Decimal128` type. Notably, the BSON
   spec *prohibits* drivers from doing Decimal128 arithmetic client-side — so a bridge pairing
   this library with the BSON type would fill an officially unfillable gap for JS Mongo users,
   not just duplicate driver functionality.
@@ -44,10 +44,11 @@ reserved `exports` subpaths) leaves room to add them later without touching the 
   decimal places") for money-handling call sites that want compile-time scale guarantees on top
   of `Decimal`.
 
-## Open decision: package name
+## Resolved: package name
 
-`big-decimal` implies arbitrary-precision decimal arithmetic; this library is fixed-precision
-IEEE 754 Decimal128, which is a different (and more specific) contract. The package has **never
-been published to npm**, so renaming is free right now and becomes expensive (breaking change,
-redirect, npm deprecation notice) the moment v1 ships. Candidate: `@ignromanov/decimal128`. This
-should be decided before the first publish, not after.
+The package was renamed from `@ignromanov/big-decimal` to **`@ignromanov/decimal128`** before the
+first publish. `big-decimal` implied arbitrary-precision decimal arithmetic; this library is
+fixed-precision IEEE 754 Decimal128, a different (and more specific) contract. Since the package
+had never been published to npm, the rename was free — and `decimal128` maps directly to the
+established mental model (MongoDB `Decimal128`, SQL, IEEE 754). The GitHub repository keeps its
+`big-decimal` name; only the published package name changed.

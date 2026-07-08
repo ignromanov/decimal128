@@ -1,5 +1,5 @@
 {
-  "name": "@ignromanov/big-decimal",
+  "name": "@ignromanov/decimal128",
   "version": "0.1.0",
   "description": "A precise decimal arithmetic library for JavaScript/TypeScript",
   "type": "module",
@@ -22,7 +22,7 @@
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:vite": "vite build",
     "build": "pnpm build:vite && pnpm build:types",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "pnpm build",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -54,5 +54,5 @@
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@9.15.3"
 }

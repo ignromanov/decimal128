@@ -1,4 +1,4 @@
-import { Decimal, Numeric } from "../decimal";
+import type { Decimal, Numeric } from "../decimal";
 import { finish, toDec } from "../internal/args";
 import { negateDec } from "../internal/special";
 

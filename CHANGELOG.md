@@ -4,7 +4,7 @@
 
 ### Added
 
-- Initial release of @ignromanov/big-decimal
+- Initial release of @ignromanov/decimal128
 - Core decimal arithmetic functionality
 - Comprehensive type support
 - Arbitrary-precision decimal operations

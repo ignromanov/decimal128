@@ -1,4 +1,4 @@
-import { Decimal } from "../decimal";
+import type { Decimal } from "../decimal";
 import { DecimalError, formatValue } from "../errors";
 import { encode } from "./canonical";
 import { decode } from "./parse";

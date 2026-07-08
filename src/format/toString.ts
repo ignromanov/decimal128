@@ -1,4 +1,4 @@
-import { Numeric } from "../decimal";
+import type { Numeric } from "../decimal";
 import { toDec } from "../internal/args";
 import { encode } from "../internal/canonical";
 

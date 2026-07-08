@@ -1,10 +1,10 @@
-import { Decimal, Numeric } from "../decimal";
+import type { Decimal, Numeric } from "../decimal";
 import { finish, toDec } from "../internal/args";
 import type { RoundingOptions } from "../internal/args";
-import { pow10 } from "../internal/coefficient";
+import { digitCount, pow10 } from "../internal/coefficient";
 import { fitFinite, resolveMode } from "../internal/round";
 import type { RoundingMode } from "../internal/round";
-import { NAN } from "../internal/types";
+import { MAX_DIGITS, NAN } from "../internal/types";
 import type { Dec } from "../internal/types";
 
 function remDec(a: Dec, b: Dec, mode: RoundingMode): Dec {
@@ -15,6 +15,11 @@ function remDec(a: Dec, b: Dec, mode: RoundingMode): Dec {
   const m = Math.min(a.exponent, b.exponent);
   const A = a.coefficient * pow10(a.exponent - m);
   const B = b.coefficient * pow10(b.exponent - m);
+  // IBM General Decimal Arithmetic defines remainder via integer division: if the
+  // integer quotient trunc(x/y) would exceed MAX_DIGITS digits, the operation raises
+  // "Division impossible" → NaN. Our bigint core could return the exact modulo, but we
+  // track GDA here for standard conformance. A, B > 0 (both operands finite & non-zero).
+  if (digitCount(A / B) > MAX_DIGITS) return NAN;
   const r = A % B;
   if (r === 0n) return { kind: "zero", sign: a.sign };
   return fitFinite(a.sign, r, m, mode);
