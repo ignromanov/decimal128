@@ -16,7 +16,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "~/*": ["./tests/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "proposal-decimal": ["./tests/differential/proposal-decimal.d.ts"]
     }
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"],

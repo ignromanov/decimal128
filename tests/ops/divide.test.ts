@@ -30,4 +30,21 @@ describe("divide", () => {
   it("div is an alias", () => {
     expect(div).toBe(divide);
   });
+
+  describe("subnormal boundary — single rounding (no double-round drift)", () => {
+    // True quotient 10^34/22 = 454545454545454545454545454545454 rem 12/22.
+    // 2*12=24 > 22, so the true value rounds UP at the last representable digit
+    // (quantum exponent -6176, the MIN_QUANTUM floor). Rounding the 35-digit
+    // scaled quotient to 34 digits FIRST, then again at the -6176 floor, loses
+    // that carry and yields the wrong ...454 instead of the correct ...455.
+    it("divide('1e-6142', '22') rounds once at the quantum floor", () => {
+      expect(divide("1e-6142", "22")).toBe("4.54545454545454545454545454545455e-6144");
+    });
+
+    // True quotient 2*10^34/37 = 540540540540540540540540540540540 rem 20/37.
+    // 2*20=40 > 37, so it also rounds UP: correct last digit is 1, not 0.
+    it("divide('2e-6142', '37') rounds once at the quantum floor", () => {
+      expect(divide("2e-6142", "37")).toBe("5.40540540540540540540540540540541e-6144");
+    });
+  });
 });
