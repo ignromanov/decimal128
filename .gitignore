@@ -26,8 +26,16 @@ dist-ssr
 # Internal tooling — never public
 .claude/
 .conclave/
+.cursorrules
 docs/superpowers/
 docs/research/
 
 # Coverage output
 coverage/
+
+# Profiling dumps
+*.cpuprofile
+profiles/
+
+# Generated benchmark results
+benchmarks/results-*.json
