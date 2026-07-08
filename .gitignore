@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Internal tooling — never public
+.claude/
+.conclave/
+docs/superpowers/
+docs/research/
+
+# Coverage output
+coverage/
