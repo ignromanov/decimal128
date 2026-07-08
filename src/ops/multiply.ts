@@ -1,10 +1,10 @@
-import { Decimal, Numeric } from "@/decimal";
-import { finish, toDec } from "@/internal/args";
-import type { RoundingOptions } from "@/internal/args";
-import { fitFinite, resolveMode } from "@/internal/round";
-import type { RoundingMode } from "@/internal/round";
-import { NAN } from "@/internal/types";
-import type { Dec, Sign } from "@/internal/types";
+import { Decimal, Numeric } from "../decimal";
+import { finish, toDec } from "../internal/args";
+import type { RoundingOptions } from "../internal/args";
+import { fitFinite, resolveMode } from "../internal/round";
+import type { RoundingMode } from "../internal/round";
+import { NAN } from "../internal/types";
+import type { Dec, Sign } from "../internal/types";
 
 export function mulDec(a: Dec, b: Dec, mode: RoundingMode): Dec {
   if (a.kind === "nan" || b.kind === "nan") return NAN;

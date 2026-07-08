@@ -1,11 +1,11 @@
-import { Decimal, Numeric } from "@/decimal";
-import { finish, toDec } from "@/internal/args";
-import type { RoundingOptions } from "@/internal/args";
-import { pow10 } from "@/internal/coefficient";
-import { fitFinite, resolveMode } from "@/internal/round"; // resolveMode added below
-import type { RoundingMode } from "@/internal/round";
-import { NAN } from "@/internal/types";
-import type { Dec, Sign } from "@/internal/types";
+import { Decimal, Numeric } from "../decimal";
+import { finish, toDec } from "../internal/args";
+import type { RoundingOptions } from "../internal/args";
+import { pow10 } from "../internal/coefficient";
+import { fitFinite, resolveMode } from "../internal/round"; // resolveMode added below
+import type { RoundingMode } from "../internal/round";
+import { NAN } from "../internal/types";
+import type { Dec, Sign } from "../internal/types";
 
 export function addDec(a: Dec, b: Dec, mode: RoundingMode): Dec {
   if (a.kind === "nan" || b.kind === "nan") return NAN;

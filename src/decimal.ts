@@ -1,5 +1,5 @@
-import { encode } from "@/internal/canonical";
-import { decode } from "@/internal/parse";
+import { encode } from "./internal/canonical";
+import { decode } from "./internal/parse";
 
 declare const decimalBrand: unique symbol;
 

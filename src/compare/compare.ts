@@ -1,7 +1,7 @@
-import { Numeric } from "@/decimal";
-import { toDec } from "@/internal/args";
-import { digitCount, pow10 } from "@/internal/coefficient";
-import type { Dec, FiniteDec, NanDec } from "@/internal/types";
+import { Numeric } from "../decimal";
+import { toDec } from "../internal/args";
+import { digitCount, pow10 } from "../internal/coefficient";
+import type { Dec, FiniteDec, NanDec } from "../internal/types";
 
 function cmpBigint(a: bigint, b: bigint): -1 | 0 | 1 {
   return a < b ? -1 : a > b ? 1 : 0;

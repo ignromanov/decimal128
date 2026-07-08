@@ -1,6 +1,6 @@
-import { Decimal, Numeric } from "@/decimal";
-import { finish, toDec } from "@/internal/args";
-import type { Dec } from "@/internal/types";
+import { Decimal, Numeric } from "../decimal";
+import { finish, toDec } from "../internal/args";
+import type { Dec } from "../internal/types";
 
 export function abs(a: Numeric): Decimal {
   const d = toDec(a);

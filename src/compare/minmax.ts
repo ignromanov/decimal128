@@ -1,9 +1,9 @@
-import { Decimal, Numeric } from "@/decimal";
-import { DecimalError } from "@/errors";
-import { finish, toDec } from "@/internal/args";
-import { NAN } from "@/internal/types";
-import type { Dec } from "@/internal/types";
-import { compareDec } from "@/compare/compare";
+import { Decimal, Numeric } from "../decimal";
+import { DecimalError } from "../errors";
+import { finish, toDec } from "../internal/args";
+import { NAN } from "../internal/types";
+import type { Dec } from "../internal/types";
+import { compareDec } from "./compare";
 
 function extreme(values: Numeric[], keepLeft: -1 | 1, name: string): Decimal {
   if (values.length === 0) {

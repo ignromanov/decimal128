@@ -1,10 +1,10 @@
-import { Numeric } from "@/decimal";
-import { DecimalError, formatValue } from "@/errors";
-import { toDec } from "@/internal/args";
-import { encode } from "@/internal/canonical";
-import { digitCount } from "@/internal/coefficient";
-import { DEFAULT_ROUNDING, roundCoefficient } from "@/internal/round";
-import type { Dec } from "@/internal/types";
+import { Numeric } from "../decimal";
+import { DecimalError, formatValue } from "../errors";
+import { toDec } from "../internal/args";
+import { encode } from "../internal/canonical";
+import { digitCount } from "../internal/coefficient";
+import { DEFAULT_ROUNDING, roundCoefficient } from "../internal/round";
+import type { Dec } from "../internal/types";
 
 function render(sign: string, digits: string, E: number, fractionDigits: number | undefined): string {
   const padded = fractionDigits === undefined ? digits : digits.padEnd(fractionDigits + 1, "0");

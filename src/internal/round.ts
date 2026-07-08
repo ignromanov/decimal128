@@ -1,6 +1,6 @@
-import { digitCount, pow10 } from "@/internal/coefficient";
-import { MAX_COEFF, MAX_DIGITS, MAX_EXP, MIN_QUANTUM } from "@/internal/types";
-import type { Dec, Sign } from "@/internal/types";
+import { digitCount, pow10 } from "./coefficient";
+import { MAX_COEFF, MAX_DIGITS, MAX_EXP, MIN_QUANTUM } from "./types";
+import type { Dec, Sign } from "./types";
 
 export type RoundingMode = "ceil" | "floor" | "trunc" | "halfExpand" | "halfEven";
 export const DEFAULT_ROUNDING: RoundingMode = "halfEven";

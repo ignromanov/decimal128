@@ -1,5 +1,5 @@
-import { Numeric } from "@/decimal";
-import { toDec } from "@/internal/args";
+import { Numeric } from "./decimal";
+import { toDec } from "./internal/args";
 
 export function isNaN(v: Numeric): boolean {
   return toDec(v).kind === "nan";

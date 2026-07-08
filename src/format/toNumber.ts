@@ -1,6 +1,6 @@
-import { Numeric } from "@/decimal";
-import { toDec } from "@/internal/args";
-import { encode } from "@/internal/canonical";
+import { Numeric } from "../decimal";
+import { toDec } from "../internal/args";
+import { encode } from "../internal/canonical";
 
 /** Escape hatch to binary64. May lose precision beyond ~15–17 digits. */
 export function toNumber(value: Numeric): number {

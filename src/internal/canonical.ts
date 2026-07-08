@@ -1,4 +1,4 @@
-import type { Dec } from "@/internal/types";
+import type { Dec } from "./types";
 
 /**
  * Emit THE canonical string. Plain decimal notation when the adjusted

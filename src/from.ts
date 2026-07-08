@@ -1,6 +1,6 @@
-import { Decimal, Numeric } from "@/decimal";
-import { DecimalError, Result } from "@/errors";
-import { finish, toDec } from "@/internal/args";
+import { Decimal, Numeric } from "./decimal";
+import { DecimalError, Result } from "./errors";
+import { finish, toDec } from "./internal/args";
 
 /** Parse and canonicalize any Numeric input. Throws DecimalError on invalid input. */
 export function from(value: Numeric): Decimal {

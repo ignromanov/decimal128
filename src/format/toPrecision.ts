@@ -1,11 +1,11 @@
-import { Numeric } from "@/decimal";
-import { DecimalError, formatValue } from "@/errors";
-import { toDec } from "@/internal/args";
-import { encode } from "@/internal/canonical";
-import { digitCount } from "@/internal/coefficient";
-import { DEFAULT_ROUNDING, roundCoefficient } from "@/internal/round";
-import { MAX_DIGITS } from "@/internal/types";
-import { toExponential } from "@/format/toExponential";
+import { Numeric } from "../decimal";
+import { DecimalError, formatValue } from "../errors";
+import { toDec } from "../internal/args";
+import { encode } from "../internal/canonical";
+import { digitCount } from "../internal/coefficient";
+import { DEFAULT_ROUNDING, roundCoefficient } from "../internal/round";
+import { MAX_DIGITS } from "../internal/types";
+import { toExponential } from "./toExponential";
 
 export function toPrecision(value: Numeric, precision: number): string {
   if (!Number.isInteger(precision) || precision < 1 || precision > MAX_DIGITS) {

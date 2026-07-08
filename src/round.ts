@@ -1,7 +1,7 @@
-import { Decimal, Numeric } from "@/decimal";
-import { finish, toDec } from "@/internal/args";
-import type { RoundingOptions } from "@/internal/args";
-import type { RoundingMode } from "@/internal/round";
+import { Decimal, Numeric } from "./decimal";
+import { finish, toDec } from "./internal/args";
+import type { RoundingOptions } from "./internal/args";
+import type { RoundingMode } from "./internal/round";
 
 export type { RoundingMode, RoundingOptions };
 

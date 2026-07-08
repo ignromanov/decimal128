@@ -1,11 +1,11 @@
-import { Decimal, Numeric } from "@/decimal";
-import { finish, toDec } from "@/internal/args";
-import type { RoundingOptions } from "@/internal/args";
-import { digitCount, pow10 } from "@/internal/coefficient";
-import { fitFinite, resolveMode, roundCoefficient } from "@/internal/round";
-import type { RoundingMode } from "@/internal/round";
-import { MAX_DIGITS, MIN_QUANTUM, NAN } from "@/internal/types";
-import type { Dec, Sign } from "@/internal/types";
+import { Decimal, Numeric } from "../decimal";
+import { finish, toDec } from "../internal/args";
+import type { RoundingOptions } from "../internal/args";
+import { digitCount, pow10 } from "../internal/coefficient";
+import { fitFinite, resolveMode, roundCoefficient } from "../internal/round";
+import type { RoundingMode } from "../internal/round";
+import { MAX_DIGITS, MIN_QUANTUM, NAN } from "../internal/types";
+import type { Dec, Sign } from "../internal/types";
 
 function divDec(a: Dec, b: Dec, mode: RoundingMode): Dec {
   if (a.kind === "nan" || b.kind === "nan") return NAN;

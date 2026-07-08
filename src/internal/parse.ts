@@ -1,6 +1,6 @@
-import { DEFAULT_ROUNDING, fitFinite } from "@/internal/round";
-import { NAN } from "@/internal/types";
-import type { Dec, Sign } from "@/internal/types";
+import { DEFAULT_ROUNDING, fitFinite } from "./round";
+import { NAN } from "./types";
+import type { Dec, Sign } from "./types";
 
 export type Numeric = string | number | bigint;
 

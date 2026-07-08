@@ -3,30 +3,25 @@
   "version": "0.1.0",
   "description": "A precise decimal arithmetic library for JavaScript/TypeScript",
   "type": "module",
-  "main": "./dist/big-decimal.umd.cjs",
-  "module": "./dist/big-decimal.js",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
-  "typesVersions": {
-    ">=4.0": {
-      "*": [
-        "./dist/types/*"
-      ]
-    }
-  },
   "exports": {
     ".": {
-      "import": "./dist/big-decimal.js",
-      "require": "./dist/big-decimal.umd.cjs",
-      "types": "./dist/types/index.d.ts"
-    }
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:vite": "vite build",
-    "build": "pnpm build:types && pnpm build:vite",
+    "build": "pnpm build:vite && pnpm build:types",
     "prepublishOnly": "npm run build",
     "test": "vitest",
     "test:run": "vitest run",

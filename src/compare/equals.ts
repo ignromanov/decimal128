@@ -1,6 +1,6 @@
-import { Numeric } from "@/decimal";
-import { toDec } from "@/internal/args";
-import { compareDec } from "@/compare/compare";
+import { Numeric } from "../decimal";
+import { toDec } from "../internal/args";
+import { compareDec } from "./compare";
 
 /** IEEE equality: NaN ≠ NaN, and -0 equals 0. */
 export function equals(a: Numeric, b: Numeric): boolean {

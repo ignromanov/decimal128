@@ -1,5 +1,5 @@
-import { NAN } from "@/internal/types";
-import type { Dec } from "@/internal/types";
+import { NAN } from "./types";
+import type { Dec } from "./types";
 
 export function negateDec(d: Dec): Dec {
   switch (d.kind) {

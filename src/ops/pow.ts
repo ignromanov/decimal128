@@ -1,10 +1,10 @@
-import { Decimal, Numeric } from "@/decimal";
-import { DecimalError, formatValue } from "@/errors";
-import { finish, toDec } from "@/internal/args";
-import type { RoundingOptions } from "@/internal/args";
-import { resolveMode } from "@/internal/round";
-import type { Dec } from "@/internal/types";
-import { mulDec } from "@/ops/multiply";
+import { Decimal, Numeric } from "../decimal";
+import { DecimalError, formatValue } from "../errors";
+import { finish, toDec } from "../internal/args";
+import type { RoundingOptions } from "../internal/args";
+import { resolveMode } from "../internal/round";
+import type { Dec } from "../internal/types";
+import { mulDec } from "./multiply";
 
 const ONE: Dec = { kind: "finite", sign: 1, coefficient: 1n, exponent: 0 };
 

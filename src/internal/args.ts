@@ -1,10 +1,10 @@
-import { Decimal } from "@/decimal";
-import { DecimalError, formatValue } from "@/errors";
-import { encode } from "@/internal/canonical";
-import { decode } from "@/internal/parse";
-import { DEFAULT_ROUNDING, ROUNDING_MODES, quantize } from "@/internal/round";
-import type { RoundingMode } from "@/internal/round";
-import type { Dec } from "@/internal/types";
+import { Decimal } from "../decimal";
+import { DecimalError, formatValue } from "../errors";
+import { encode } from "./canonical";
+import { decode } from "./parse";
+import { DEFAULT_ROUNDING, ROUNDING_MODES, quantize } from "./round";
+import type { RoundingMode } from "./round";
+import type { Dec } from "./types";
 
 export type RoundingOptions = {
   maximumFractionDigits?: number;

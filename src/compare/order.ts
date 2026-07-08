@@ -1,6 +1,6 @@
-import { Numeric } from "@/decimal";
-import { toDec } from "@/internal/args";
-import { compareDec } from "@/compare/compare";
+import { Numeric } from "../decimal";
+import { toDec } from "../internal/args";
+import { compareDec } from "./compare";
 
 export function lessThan(a: Numeric, b: Numeric): boolean {
   return compareDec(toDec(a), toDec(b)) === -1;
