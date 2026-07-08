@@ -39,3 +39,6 @@ profiles/
 
 # Generated benchmark results
 benchmarks/results-*.json
+
+# Local dev playground (built against pre-Decimal128 API; not shipped)
+playground/
