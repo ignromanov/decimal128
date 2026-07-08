@@ -50,5 +50,5 @@ The package was renamed from `@ignromanov/big-decimal` to **`@ignromanov/decimal
 first publish. `big-decimal` implied arbitrary-precision decimal arithmetic; this library is
 fixed-precision IEEE 754 Decimal128, a different (and more specific) contract. Since the package
 had never been published to npm, the rename was free — and `decimal128` maps directly to the
-established mental model (MongoDB `Decimal128`, SQL, IEEE 754). The GitHub repository keeps its
-`big-decimal` name; only the published package name changed.
+established mental model (MongoDB `Decimal128`, SQL, IEEE 754). The GitHub repository was
+subsequently renamed to `decimal128` as well, so the repo and package names now match.

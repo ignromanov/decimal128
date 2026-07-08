@@ -51,13 +51,13 @@
     "url": "https://github.com/ignromanov"
   },
   "license": "MIT",
-  "homepage": "https://github.com/ignromanov/big-decimal#readme",
+  "homepage": "https://github.com/ignromanov/decimal128#readme",
   "bugs": {
-    "url": "https://github.com/ignromanov/big-decimal/issues"
+    "url": "https://github.com/ignromanov/decimal128/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ignromanov/big-decimal.git"
+    "url": "git+https://github.com/ignromanov/decimal128.git"
   },
   "engines": {
     "node": ">=18"
