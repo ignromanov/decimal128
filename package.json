@@ -27,7 +27,8 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "test:debug": "vitest --pool=forks --watch"
+    "test:debug": "vitest --pool=forks --watch",
+    "size-check": "node scripts/size-check.mjs"
   },
   "keywords": [
     "decimal",
@@ -47,8 +48,8 @@
     "@types/node": "^24.3.0",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
+    "esbuild": "^0.28.1",
     "proposal-decimal": "20250613.0.0",
-    "terser": "^5.43.1",
     "typescript": "~5.9.2",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
