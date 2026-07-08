@@ -1,7 +1,7 @@
 {
   "name": "@ignromanov/decimal128",
   "version": "0.1.0",
-  "description": "A precise decimal arithmetic library for JavaScript/TypeScript",
+  "description": "IEEE 754 Decimal128 arithmetic for JS/TS — exact, TC39-aligned, tree-shakeable, functional API, zero dependencies.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -31,18 +31,39 @@
     "size-check": "node scripts/size-check.mjs"
   },
   "keywords": [
+    "decimal128",
+    "ieee-754",
+    "ieee754",
     "decimal",
+    "tc39",
     "arithmetic",
     "precision",
-    "bigdecimal",
-    "typescript",
-    "bignumber"
+    "fixed-point",
+    "money",
+    "financial",
+    "currency",
+    "bignumber",
+    "bigint",
+    "tree-shakeable"
   ],
-  "author": "Ignat Romanov",
+  "author": {
+    "name": "Ignat Romanov",
+    "url": "https://github.com/ignromanov"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/ignromanov/big-decimal#readme",
+  "bugs": {
+    "url": "https://github.com/ignromanov/big-decimal/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ignromanov/big-decimal.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

@@ -1,38 +1,68 @@
+<div align="center">
+
 # @ignromanov/decimal128
 
-<div align="center">
+### Exact decimal math for JavaScript & TypeScript — so `0.1 + 0.2` is `0.3`, not `0.30000000000000004`.
 
 [![npm version](https://img.shields.io/npm/v/@ignromanov/decimal128.svg)](https://www.npmjs.com/package/@ignromanov/decimal128)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 
-**TS-first, tree-shakeable IEEE 754 Decimal128 arithmetic, API-aligned with the
-[TC39 Decimal proposal](https://github.com/tc39/proposal-decimal).**
+[The problem](#the-problem) · [See it work](#see-it-work) · [Install](#install) · [Quick start](#quick-start) · [Footguns](#footguns--values-are-strings) · [Reference](#reference)
 
 </div>
 
-## Why
+```bash
+npm install @ignromanov/decimal128
+```
+
+---
+
+## The Problem
 
 ```js
 0.1 + 0.2; // 0.30000000000000004
 ```
 
-Binary floating point can't represent most decimal fractions exactly, which makes it unsafe
-for money, invoicing, or any calculation where "close enough" isn't good enough. The usual fix
-is arbitrary-precision decimal math — but that reopens a different can of worms (unbounded
-memory, no interoperability contract, every library defining its own rules).
+Binary floating point can't represent most decimal fractions exactly, which makes it unsafe for
+money, invoicing, or any calculation where "close enough" isn't good enough.
 
-This library implements **IEEE 754-2019 Decimal128** instead: the same fixed-precision decimal
-model used by MongoDB's `Decimal128` BSON type, SQL `DECIMAL`, and the (Stage 1) TC39 `Decimal`
-proposal. Every value carries up to 34 significant digits — enough for any real-world financial
-or scientific use — with well-defined rounding, overflow, and special-value (`NaN`/`±Infinity`)
-behavior instead of ad hoc library-specific rules.
+If you've reached for `decimal.js`, `big.js`, or `bignumber.js` before, you already know the fix:
+do decimal math in a dedicated type, never in binary floats. What's different here is *how* and
+*to what standard*:
 
-```js
-import { from, add } from "@ignromanov/decimal128";
+- It implements **IEEE 754-2019 Decimal128** — the same fixed-precision decimal model used by
+  MongoDB's `Decimal128` BSON type, SQL `DECIMAL`, and the (Stage 1) TC39 `Decimal` proposal —
+  with well-defined rounding, overflow, and special-value (`NaN`/`±Infinity`) behavior, instead of
+  each library inventing its own precision rules.
+- It's **TS-first** (branded types, discriminated errors) and **per-operation tree-shakeable** —
+  a single imported op bundles to **~3.8 KB**, because there's no monolithic class to drag in.
 
-add(from("0.1"), from("0.2")); // "0.3"
+Every value carries up to 34 significant digits — enough for any real-world financial or
+scientific use.
+
+---
+
+## See It Work
+
+```ts
+import { from, add, divide, toFixed } from "@ignromanov/decimal128";
+
+add(from("0.1"), from("0.2")); // "0.3"   — not 0.30000000000000004
+
+const share = divide(from("10"), from(3));
+share; // "3.333333333333333333333333333333333"  (34 significant digits)
+toFixed(share, 2); // "3.33"
+
+// Mixed input types are normalized for you:
+add("1.5", 2n); // "3.5"
 ```
+
+There is no class and no `new`. A `Decimal` **is** a branded, canonical string — you create one
+with `from` and operate on it with free functions. Every function accepts
+`Numeric = string | number | bigint | Decimal` and normalizes internally.
+
+---
 
 ## Install
 
@@ -44,13 +74,14 @@ pnpm add @ignromanov/decimal128
 yarn add @ignromanov/decimal128
 ```
 
-Zero runtime dependencies. Ships as dual ESM + CJS with `sideEffects: false`, so bundlers can
-tree-shake down to just the operations you import.
+**What it touches: nothing.** Zero runtime dependencies. Pure functions over strings — no import-time
+side effects, no filesystem, no network, no global config. It ships as dual **ESM + CJS** with
+`sideEffects: false`, so bundlers tree-shake it down to just the operations you import. To remove it,
+uninstall the package — there's no other footprint.
+
+---
 
 ## Quick start
-
-There is no class. A `Decimal` **is** a branded, canonical string — you create one with `from`
-and operate on it with free functions:
 
 ```ts
 import { from, add, divide, round, toFixed } from "@ignromanov/decimal128";
@@ -65,16 +96,21 @@ round(from("2.5"), { maximumFractionDigits: 0 }); // "2"  (default mode is half-
 toFixed(divide(a, b), 4); // "3.3333"
 ```
 
-Every function accepts `Numeric = string | number | bigint | Decimal` and normalizes internally,
-so `add("1.5", 2n)` works too. Because each export is a standalone function with no shared
-module-level state, importing a single op (e.g. `import { add } from "@ignromanov/decimal128"`)
-pulls in only that op's dependency graph — see [Tree-shaking](#tree-shaking) below.
+Because each export is a standalone function with no shared module-level state, importing a single
+op (`import { add } from "@ignromanov/decimal128"`) pulls in only that op's dependency graph — see
+[Tree-shaking](#reference).
 
-## ⚠️ Footguns — values are strings
+---
 
-A `Decimal` is a real JS string at runtime. That gives you free `===`, `Map`/object-key, and
-`JSON.stringify` support for finite values — but it also means **native JS operators silently do
-the wrong thing.** Always go through the library functions:
+## Footguns — values are strings
+
+> [!WARNING]
+> A `Decimal` is a plain string at runtime, so native JS operators compile and run — they just
+> produce wrong answers. Read this section before you write `a + b`.
+
+The upside of that representation: finite values get free `===`, `Map`/object-key, and
+`JSON.stringify` support. The downside is everything below — always go through the library
+functions:
 
 ```ts
 const a = from(1);
@@ -95,9 +131,12 @@ from(0) === from("-0"); // false — distinct strings. Use equals(from(0), from(
   "NaN-aware" equality with `===`. Use `equals()` for value equality; reserve `===` as a fast
   path only when you already know both sides are finite and non-zero.
 
-## API reference
+---
 
-Every export is a standalone, tree-shakeable named export.
+## Reference
+
+<details>
+<summary><b>API</b> — every export is a standalone, tree-shakeable named export</summary>
 
 | Export | Description |
 |---|---|
@@ -109,11 +148,11 @@ Every export is a standalone, tree-shakeable named export.
 | `subtract(a, b, options?)` / `sub` | Subtraction. |
 | `multiply(a, b, options?)` / `mul` | Multiplication. |
 | `divide(a, b, options?)` / `div` | Division; `÷0` yields `Infinity`/`-Infinity`/`NaN`, never throws. |
-| `remainder(a, b, options?)` / `mod` | Truncated remainder (sign follows the dividend); `NaN` when the integer quotient exceeds 34 digits (GDA "Division impossible" — see [Intentional divergences](#intentional-divergences)). |
+| `remainder(a, b, options?)` / `mod` | Truncated remainder (sign follows the dividend); `NaN` when the integer quotient exceeds 34 digits (GDA "Division impossible" — see Intentional divergences). |
 | `abs(a)` | Absolute value. |
 | `negate(a)` / `neg` | Sign flip. |
-| `pow(base, exponent, options?)` | Integer exponentiation — an extension beyond the TC39 proposal (see [Semantics](#semantics)). |
-| `compare(a, b)` / `cmp` | Total order: `-1 \| 0 \| 1`; `NaN` sorts last and equals itself (see [Semantics](#semantics)). |
+| `pow(base, exponent, options?)` | Integer exponentiation — an extension beyond the TC39 proposal (see Semantics). |
+| `compare(a, b)` / `cmp` | Total order, returns `-1 \| 0 \| 1`; `NaN` sorts last and equals itself (see Semantics). |
 | `equals(a, b)` / `eq` | Value equality; `NaN ≠ NaN`, `-0 == 0`. |
 | `lessThan(a, b)` / `lt` | IEEE-ordered `<`; any `NaN` operand → `false`. |
 | `lessThanOrEqual(a, b)` / `lte` | IEEE-ordered `<=`. |
@@ -132,7 +171,12 @@ Every export is a standalone, tree-shakeable named export.
 | `DecimalError` | Thrown by `from`/`pow`/invalid options. Has `.code: DecimalErrorCode`. |
 | `DecimalErrorCode`, `Result` | `"INVALID_INPUT" \| "INVALID_OPTION" \| "INVALID_EXPONENT"`; `{ ok: true, value } \| { ok: false, error }`. |
 
-## Semantics
+The four `to*` string formatters and `toNumber` return a `string`/`number`, not a `Decimal`.
+
+</details>
+
+<details>
+<summary><b>Semantics</b> — canonical form, precision, rounding, special values</summary>
 
 - **Canonical form**: no trailing fractional zeros (`from("1.20")` → `"1.2"`), no bare `.`, no
   leading `+`; scientific notation only outside `[1e-6, 1e34)`; `-0` is a distinct canonical
@@ -149,7 +193,7 @@ Every export is a standalone, tree-shakeable named export.
   own `remainder` operation (which rounds half-to-even) and matching the TC39 proposal. It follows
   IBM General Decimal Arithmetic on the precision limit: when the integer quotient `trunc(x/y)`
   would exceed 34 digits, the operation returns `NaN` ("Division impossible") rather than a value.
-  See [Intentional divergences](#intentional-divergences).
+  See Intentional divergences.
 - **`pow`** is a **documented extension** beyond the TC39 proposal, which defines no `pow`. It
   accepts a non-negative integer exponent and rounds once per multiplication step.
 - **`compare`** defines a total order for sortability: `NaN` compares equal to itself and greater
@@ -159,7 +203,10 @@ Every export is a standalone, tree-shakeable named export.
   through `from`/`toString` as the literal strings `"NaN"`, `"Infinity"`, `"-Infinity"`, `"0"`,
   `"-0"`.
 
-## Intentional divergences
+</details>
+
+<details>
+<summary><b>Intentional divergences</b> — where output differs from the reference oracle, and why</summary>
 
 Every point where this library's output differs from the reference oracle
 (`proposal-decimal`, the TC39 champion polyfill the differential suite tests against) is either
@@ -172,13 +219,21 @@ a bug or a deliberate, documented decision. These are the deliberate ones:
 | **`compare` (total order) vs `equals` (IEEE)** | `compare` is a *total* order — `NaN` sorts last and equals itself — so values are sortable. `equals`/`lt`/`lte`/`gt`/`gte` keep strict IEEE (`NaN ≠ NaN`). | IEEE defines only the (partial) predicate semantics. | Sorting needs a total order; IEEE predicates need IEEE semantics. Both are provided under distinct names, never conflated. |
 | **`toString` notation threshold** | Scientific notation only outside `[1e-6, 1e34)`. | The polyfill mimics legacy JS `Number.toString` thresholds (exponent ≥ 21 or ≤ -7). | A decimal-appropriate threshold. This is a *notation* choice, not a *value* difference — the differential suite re-threads the polyfill's output through our own `toString` so it compares values, not notation. |
 
-## Tree-shaking
+</details>
+
+<details>
+<summary><b>Tree-shaking</b> — how one op stays ~3.8 KB</summary>
 
 Because every export is a free function with no shared class or prototype, importing one
 operation only pulls in its own dependency graph. A CI size guard
 (`scripts/size-check.mjs`) bundles a fixture that imports a single op (`add`) with esbuild and
-asserts it stays under a fixed threshold — currently **~3.7 KB minified** (measured via
-`pnpm size-check`), well below what a class-based decimal library pulls in for the same op.
+asserts it stays under a fixed threshold. The current measured single-op bundle is **3837 bytes
+minified** (~3.75 KB), against a **4608-byte** ceiling — well below what a class-based decimal
+library pulls in for the same op. Reproduce it with `pnpm size-check`.
+
+</details>
+
+---
 
 ## Honest positioning
 
@@ -204,6 +259,8 @@ years of field use. A few things worth knowing before you adopt it:
   in signed-zero and division-by-zero handling, and remainder precision on large operands — which
   this library handles per-spec instead. That's offered as measured evidence of what the test
   suite actually caught, not a claim of superiority to the proposal itself.
+
+---
 
 ## License
 
