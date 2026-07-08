@@ -1,5 +1,5 @@
 ---
-advisor: Radix
+advisor: radix-cto
 role: "CTO of @ignromanov/big-decimal: TS-first Decimal128 arithmetic, IEEE 754 / TC39 conformance, differential testing, tree-shakeable API design, packaging & release"
 ---
 
