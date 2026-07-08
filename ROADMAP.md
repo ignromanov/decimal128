@@ -1,162 +1,54 @@
-# BigDecimal Implementation Roadmap
+# Roadmap
 
-This document tracks the implementation progress of the BigDecimal library, inspired by the bignumber.js implementation but focused on decimal arithmetic with arbitrary precision.
+## v1 — this release
 
-## Implemented Features ✅
+`@ignromanov/decimal128` v1 pivots the project to a TS-first, tree-shakeable IEEE 754
+Decimal128 arithmetic library, API-aligned with the TC39 `Decimal` proposal. Design source of
+truth: `docs/superpowers/specs/2026-07-07-big-decimal-decimal128-pivot-design.md`.
 
-### Core Functionality
+Done-criteria (spec §1), all met at release:
 
-- [x] Basic BigDecimal class structure
-- [x] Constructor supporting multiple input types (string, number, bigint, BigDecimal)
-- [x] Internal value representation using bigint
-- [x] Scale (decimal places) management
-- [x] Sign handling
+- [x] `pnpm test:coverage` green (25 test files, 359 tests)
+- [x] Differential tests vs the `proposal-decimal` polyfill pass (2000+ seeded input pairs)
+- [x] `pnpm tsc --noEmit` green
+- [x] `pnpm build` produces per-module ESM + CJS + type declarations (`preserveModules`)
+- [x] Tree-shaking size guard passes (`pnpm size-check`)
+- [x] `README.md` / `LICENSE` / `ROADMAP.md` updated
 
-### Arithmetic Operations
+Functional API surface shipped: construction (`from`, `tryFrom`, `isDecimal`), arithmetic
+(`add`, `subtract`, `multiply`, `divide`, `remainder`, `abs`, `negate`, `pow`), comparison
+(`compare`, `equals`, `lessThan`, `lessThanOrEqual`, `greaterThan`, `greaterThanOrEqual`, `min`,
+`max`), rounding (`round`, 5 rounding modes), formatting (`toString`, `toFixed`, `toPrecision`,
+`toExponential`, `toNumber`), predicates (`isFinite`, `isNaN`, `isNegative`, `isZero`), and
+errors (`DecimalError`, `Result`). See `README.md` for the full reference.
 
-- [x] Addition (plus)
-- [x] Subtraction (minus)
-- [x] Multiplication (times)
-- [x] Division (div)
-- [x] Power (pow)
-- [x] Square root (sqrt) - basic implementation
-- [x] Negation (negate)
-- [x] Absolute value (abs)
+## Deferred (not v1, architected-for)
 
-### Comparison and Validation
+These were scoped out of v1 to keep it finishable; the module structure (`sideEffects: false`,
+reserved `exports` subpaths) leaves room to add them later without touching the core.
 
-- [x] Comparison methods (compareTo)
-- [x] Value validation (isValid)
-- [x] Zero checks (isZero)
-- [x] Sign checks (isPositive, isNegative)
+- **`sqrt`, trig/log/exp** — outside the TC39 `Decimal` proposal's surface; no clear v1 use case
+  to justify the correctness burden of implementing them to Decimal128 precision.
+- **`scale10`** — present in the TC39 API; deferred until a concrete consumer needs it.
+- **`toLocaleString` / `Intl` integration** — locale-aware formatting is a distinct, sizeable
+  surface (and a tree-shaking risk if bundled into core formatting) — candidate for a separate
+  subpath.
+- **`decimal128/chain`** — an ergonomic fluent/chained-call façade over the free-function API
+  (`init` + `Proxy`, or a thin subpath class). The free-function core stays the source of truth;
+  this would be sugar on top, not a replacement.
+- **`decimal128/mongodb`** — a bridge to MongoDB's BSON `Decimal128` type. Notably, the BSON
+  spec *prohibits* drivers from doing Decimal128 arithmetic client-side — so a bridge pairing
+  this library with the BSON type would fill an officially unfillable gap for JS Mongo users,
+  not just duplicate driver functionality.
+- **`Fixed<D>` money type** — a const-generic fixed-scale wrapper (e.g. "always exactly 2
+  decimal places") for money-handling call sites that want compile-time scale guarantees on top
+  of `Decimal`.
 
-### Formatting and Conversion
+## Resolved: package name
 
-- [x] toString() implementation
-- [x] toFixed() for decimal place formatting
-- [x] valueOf() for primitive conversion
-- [x] Symbol.toPrimitive implementation
-
-### Rounding
-
-- [x] Basic rounding implementation (round)
-
-## Planned Features 🚀
-
-### Enhanced Arithmetic
-
-- [ ] Modulo operation (mod)
-- [ ] Integer division (idiv)
-- [ ] Enhanced sqrt implementation with Newton's method
-- [ ] Exponential function (exp)
-- [ ] Natural logarithm (ln)
-- [ ] Trigonometric functions (sin, cos, tan)
-
-### Precision and Rounding
-
-- [ ] Multiple rounding modes:
-  - [ ] ROUND_UP
-  - [ ] ROUND_DOWN
-  - [ ] ROUND_CEIL
-  - [ ] ROUND_FLOOR
-  - [ ] ROUND_HALF_UP
-  - [ ] ROUND_HALF_DOWN
-  - [ ] ROUND_HALF_EVEN
-  - [ ] ROUND_HALF_CEIL
-  - [ ] ROUND_HALF_FLOOR
-- [ ] Precision management
-- [ ] Significant digits handling
-
-### Configuration
-
-- [ ] Global configuration system
-- [ ] Decimal places settings
-- [ ] Rounding mode settings
-- [ ] Exponential notation settings
-- [ ] Format settings
-
-### Additional Features
-
-- [ ] fromString with exponential notation
-- [ ] Scientific notation support
-- [ ] Custom formatting options
-- [ ] Locale-aware formatting
-- [ ] Binary/Octal/Hex conversion
-
-### Error Handling
-
-- [ ] Enhanced error messages
-- [ ] Custom error types
-- [ ] Error handling configuration
-
-### Performance Optimizations
-
-- [ ] Caching mechanism
-- [ ] Lazy evaluation
-- [ ] Memory usage optimizations
-- [ ] Algorithm improvements
-
-### Testing and Documentation
-
-- [ ] Comprehensive unit tests
-- [ ] Performance benchmarks
-- [ ] API documentation
-- [ ] Usage examples
-- [ ] TypeScript type improvements
-
-## Future Considerations 🤔
-
-### Advanced Features
-
-- [ ] BigDecimal.random() implementation
-- [ ] Matrix operations
-- [ ] Complex number support
-- [ ] Interval arithmetic
-- [ ] Financial calculations (compound interest, etc.)
-
-### Integration
-
-- [ ] Browser bundle optimization
-- [ ] Node.js optimizations
-- [ ] WebAssembly implementation
-- [ ] Worker thread support
-
-### Standards Compliance
-
-- [ ] IEEE 754 compliance
-- [ ] Decimal128 support
-- [ ] Standard decimal arithmetic specification
-
-## Release Planning 📅
-
-### v1.0.0 (Current)
-
-- Basic arithmetic operations
-- Core functionality
-- Essential formatting
-
-### v1.1.0
-
-- Enhanced rounding modes
-- Improved error handling
-- Additional arithmetic operations
-
-### v1.2.0
-
-- Configuration system
-- Advanced formatting options
-- Performance optimizations
-
-### v2.0.0
-
-- Advanced mathematical functions
-- Complete IEEE 754 compliance
-- Comprehensive documentation
-
-## Contributing
-
-Please feel free to contribute to any of the planned features or suggest new ones. Follow these steps:
-
-1. Check the feature isn't already being worked on
-2. Open an issue to discuss the implementation
-3. Submit a pull request with tests and documentation
+The package was renamed from `@ignromanov/big-decimal` to **`@ignromanov/decimal128`** before the
+first publish. `big-decimal` implied arbitrary-precision decimal arithmetic; this library is
+fixed-precision IEEE 754 Decimal128, a different (and more specific) contract. Since the package
+had never been published to npm, the rename was free — and `decimal128` maps directly to the
+established mental model (MongoDB `Decimal128`, SQL, IEEE 754). The GitHub repository keeps its
+`big-decimal` name; only the published package name changed.

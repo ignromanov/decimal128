@@ -1,61 +1,79 @@
 {
-  "name": "@ignromanov/big-decimal",
+  "name": "@ignromanov/decimal128",
   "version": "0.1.0",
-  "description": "A precise decimal arithmetic library for JavaScript/TypeScript",
+  "description": "IEEE 754 Decimal128 arithmetic for JS/TS — exact, TC39-aligned, tree-shakeable, functional API, zero dependencies.",
   "type": "module",
-  "main": "./dist/big-decimal.umd.cjs",
-  "module": "./dist/big-decimal.js",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
-  "typesVersions": {
-    ">=4.0": {
-      "*": [
-        "./dist/types/*"
-      ]
-    }
-  },
   "exports": {
     ".": {
-      "import": "./dist/big-decimal.js",
-      "require": "./dist/big-decimal.umd.cjs",
-      "types": "./dist/types/index.d.ts"
-    }
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:vite": "vite build",
-    "build": "pnpm build:types && pnpm build:vite",
-    "prepublishOnly": "npm run build",
+    "build": "pnpm build:vite && pnpm build:types",
+    "prepublishOnly": "pnpm build",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "test:debug": "vitest --pool=forks --watch"
+    "test:debug": "vitest --pool=forks --watch",
+    "size-check": "node scripts/size-check.mjs"
   },
   "keywords": [
+    "decimal128",
+    "ieee-754",
+    "ieee754",
     "decimal",
+    "tc39",
     "arithmetic",
     "precision",
-    "bigdecimal",
-    "typescript",
-    "bignumber"
+    "fixed-point",
+    "money",
+    "financial",
+    "currency",
+    "bignumber",
+    "bigint",
+    "tree-shakeable"
   ],
-  "author": "Ignat Romanov",
+  "author": {
+    "name": "Ignat Romanov",
+    "url": "https://github.com/ignromanov"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/ignromanov/big-decimal#readme",
+  "bugs": {
+    "url": "https://github.com/ignromanov/big-decimal/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ignromanov/big-decimal.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
-    "terser": "^5.43.1",
+    "esbuild": "^0.28.1",
+    "proposal-decimal": "20250613.0.0",
     "typescript": "~5.9.2",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@9.15.3"
 }
