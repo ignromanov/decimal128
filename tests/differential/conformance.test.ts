@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 // so `main: "src/Decimal.mjs"` is the real entry). Aliased to `Decimal128` here to
 // avoid colliding with our own `Decimal` string-brand type and to match IEEE naming.
 import { Decimal as Decimal128 } from "proposal-decimal";
-import { add, divide, equals, isZero, multiply, remainder, round, subtract, toString } from "@/index";
+import { add, divide, equals, isNegative, isZero, multiply, remainder, round, subtract, toString } from "@/index";
 import { mulberry32, randomDecimalString } from "~/differential/prng";
 
 const CASES = 2000;
@@ -77,8 +77,22 @@ const SUBNORMAL_VALUES = new Set(["1e-6176"]);
  * the dividend's own sign instead of XOR-ing with the divisor's sign. Scoped to pairs
  * where at least one operand is zero, which is where all these fast paths trigger.
  */
-function hasZeroSignBug(a: string, b: string): boolean {
-  return isZero(a) || isZero(b);
+/**
+ * BUG B (add) — the zero-fast-path bug fires ONLY for opposite-signed zero+zero:
+ * add("0","-0") wrongly returns "-0" (IEEE halfEven: +0). Same-signed zeros and any
+ * nonzero+zero are handled correctly by the polyfill, so scope the skip exactly.
+ */
+function addZeroSignBug(a: string, b: string): boolean {
+  return isZero(a) && isZero(b) && isNegative(a) !== isNegative(b);
+}
+
+/**
+ * BUG B (divide) — wrong only when the divisor is zero (polyfill returns NaN, not
+ * ±Infinity) or the dividend is zero AND the divisor is negative (polyfill drops the
+ * sign XOR). Zero dividend over a positive divisor is handled correctly.
+ */
+function divideZeroSignBug(a: string, b: string): boolean {
+  return isZero(b) || (isZero(a) && isNegative(b));
 }
 
 function significantDigitCount(s: string): number {
@@ -110,7 +124,7 @@ function remainderPrecisionUnreliable(a: string, b: string): boolean {
 describe(`differential vs proposal-decimal (${pairs.length} pairs, seed 0xdec14a11)`, () => {
   it("add matches", () => {
     for (const [a, b] of pairs) {
-      if (hasZeroSignBug(a, b)) continue; // BUG B
+      if (addZeroSignBug(a, b)) continue; // BUG B
       const expected = refValue((x, y) => x.add(y).toString(), a, b);
       if (expected === "throw") continue;
       expect(add(a, b), `add(${a}, ${b})`).toBe(expected);
@@ -136,7 +150,7 @@ describe(`differential vs proposal-decimal (${pairs.length} pairs, seed 0xdec14a
 
   it("divide matches", () => {
     for (const [a, b] of pairs) {
-      if (hasZeroSignBug(a, b) || SUBNORMAL_PAIRS.has(`${a}|${b}`)) continue; // BUG A, B
+      if (divideZeroSignBug(a, b) || SUBNORMAL_PAIRS.has(`${a}|${b}`)) continue; // BUG A, B
       const expected = refValue((x, y) => x.divide(y).toString(), a, b);
       if (expected === "throw") continue;
       expect(divide(a, b), `divide(${a}, ${b})`).toBe(expected);
