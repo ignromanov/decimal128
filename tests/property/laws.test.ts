@@ -140,3 +140,51 @@ describe("special values", () => {
     );
   });
 });
+
+describe("rounding-mode symmetry", () => {
+  // ceil and floor are reflections of one another: ceil(x) === -floor(-x). A rounding
+  // bug that treats the two directions asymmetrically at a boundary breaks this, and
+  // nothing else in this file exercises a non-default rounding mode.
+  it("divide under ceil mirrors divide under floor", () => {
+    fc.assert(
+      fc.property(
+        anyDecimal,
+        anyDecimal,
+        (a, b) =>
+          divide(a, b, { roundingMode: "ceil" }) ===
+          negate(divide(negate(a), b, { roundingMode: "floor" })),
+      ),
+      RUNS,
+    );
+  });
+
+  // trunc, halfEven and halfExpand are sign-symmetric: rounding -x gives -(rounding x).
+  it.each(["trunc", "halfEven", "halfExpand"] as const)(
+    "divide under %s is sign-symmetric",
+    (mode) => {
+      fc.assert(
+        fc.property(
+          anyDecimal,
+          anyDecimal,
+          (a, b) =>
+            divide(a, b, { roundingMode: mode }) ===
+            negate(divide(negate(a), b, { roundingMode: mode })),
+        ),
+        RUNS,
+      );
+    },
+  );
+
+  // Directed rounding brackets the exact quotient from both sides, including when the
+  // quotient overflows (floor of a positive over-max clamps to max-normal, ceil goes to Infinity).
+  it("floor never exceeds ceil", () => {
+    fc.assert(
+      fc.property(nonZeroFiniteDecimal, nonZeroFiniteDecimal, (a, b) => {
+        const lo = divide(a, b, { roundingMode: "floor" });
+        const hi = divide(a, b, { roundingMode: "ceil" });
+        return compare(lo, hi) <= 0;
+      }),
+      RUNS,
+    );
+  });
+});
