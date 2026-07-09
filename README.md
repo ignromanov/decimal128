@@ -254,13 +254,18 @@ years of field use. A few things worth knowing before you adopt it:
   behaves identically) but differs from an arbitrary-precision decimal such as Python's `decimal`
   or decNumber, which keep the operand exact and round only the in-range result. Operand parsing
   always uses `halfEven`; a per-operation `roundingMode` applies to the result, not to ingest.
-- **Correctness is differential-tested.** The test suite runs 2000+ seeded input pairs against
-  `proposal-decimal`, the TC39 champion's own reference polyfill, and asserts parity across
-  arithmetic, rounding, comparison, and formatting. That comparison surfaced concrete points
-  where the polyfill diverges from strict IEEE 754 behavior — no subnormal support, differences
-  in signed-zero and division-by-zero handling, and remainder precision on large operands — which
-  this library handles per-spec instead. That's offered as measured evidence of what the test
-  suite actually caught, not a claim of superiority to the proposal itself.
+- **Correctness is tested from three independent angles.** The test suite runs 2000+ seeded
+  input pairs against `proposal-decimal`, the TC39 champion's own reference polyfill, and
+  asserts parity across arithmetic, rounding, comparison, and formatting. That comparison
+  surfaced concrete points where the polyfill diverges from strict IEEE 754 behavior — no
+  subnormal support, differences in signed-zero and division-by-zero handling, and remainder
+  precision on large operands — which this library handles per-spec instead. That's offered as
+  measured evidence of what the test suite actually caught, not a claim of superiority to the
+  proposal itself. Alongside the differential suite, a known-answer suite runs 2912 vectors from
+  IBM's `dq*` decTest files through the public API and compares by value. And an oracle-free set
+  of metamorphic property tests runs over a boundary-dense generator that reaches subnormals
+  (`1e-6176`), max-normal, and exact ties — the range the differential suite's PRNG structurally
+  cannot reach.
 
 ---
 
