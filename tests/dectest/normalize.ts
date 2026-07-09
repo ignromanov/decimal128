@@ -15,6 +15,12 @@ export type NormValue =
   | { kind: "inf"; sign: 1 | -1 }
   | { kind: "num"; sign: 1 | -1; coeff: bigint; exp: number };
 
+// Deliberately narrow: bare NaN only. `sNaN`, payload-bearing NaN (`NaN123`) and `+NaN`
+// are unparsable here on purpose — the runner's skip policy filters them out before this
+// function ever sees them. Widening this to swallow `sNaN` would normalize a signalling
+// NaN into a quiet one, so a `-> NaN Invalid_operation` vector would pass for the wrong
+// reason. The throw is a latch: if the skip policy ever drifts, the suite fails loudly
+// instead of going quietly green.
 const NAN_RE = /^-?nan$/i;
 const INF_RE = /^([+-]?)inf(?:inity)?$/i;
 const NUM_RE = /^([+-]?)(\d*)(?:\.(\d*))?(?:[eE]([+-]?\d+))?$/;
