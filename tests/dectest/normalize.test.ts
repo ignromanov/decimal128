@@ -35,6 +35,14 @@ describe("normalizeLiteral", () => {
   it("rejects literals it cannot represent", () => {
     expect(() => normalizeLiteral("#")).toThrow(/unparsable/);
   });
+
+  it("throws on every NaN form our value model cannot carry", () => {
+    // The runner's skip policy filters these out first; the throw is the latch that
+    // catches skip-policy drift instead of silently accepting a signalling NaN.
+    for (const literal of ["-NaN", "+NaN", "sNaN", "NaN123", "-sNaN99"]) {
+      expect(() => normalizeLiteral(literal)).toThrow(/unparsable/);
+    }
+  });
 });
 
 describe("toOperandInput", () => {
