@@ -1,8 +1,8 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import type { Decimal } from "@/index";
-import { isDecimal, isFinite as isFiniteDec, isZero } from "@/index";
-import { anyDecimal, finiteDecimal, nonZeroFiniteDecimal } from "./arbitraries";
+import { from, isDecimal, isFinite as isFiniteDec, isZero } from "@/index";
+import { anyDecimal, FINITE_EDGES, finiteDecimal, nonZeroFiniteDecimal } from "./arbitraries";
 
 describe("decimal arbitraries", () => {
   it("only ever produces canonical Decimal values", () => {
@@ -18,9 +18,15 @@ describe("decimal arbitraries", () => {
   });
 
   it("reaches the subnormal and emax boundaries the differential PRNG cannot", () => {
-    const sample = fc.sample(anyDecimal, { seed: 7, numRuns: 2000 });
-    expect(sample.some((x) => x.includes("e-617"))).toBe(true);
-    expect(sample.some((x) => x.includes("e+614"))).toBe(true);
+    // The hand-authored corpus already contains 1e-6176 and max-normal, so asserting over the
+    // whole sample would pass even if broadFinite's quantum range were narrowed to [-100, 100].
+    // Exclude the corpus and demand extreme exponents from the random branch alone.
+    const corpus = new Set<string>(FINITE_EDGES.map((s) => from(s)));
+    const generated = fc
+      .sample(finiteDecimal, { seed: 7, numRuns: 2000 })
+      .filter((x) => !corpus.has(x));
+    expect(generated.some((x) => /e-[1-9]\d{3}$/.test(x))).toBe(true);
+    expect(generated.some((x) => /e\+[1-9]\d{3}$/.test(x))).toBe(true);
   });
 
   it("shrinks a counterexample down to a minimal value", () => {

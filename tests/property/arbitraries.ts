@@ -15,7 +15,7 @@ const MAX_NORMAL = "9.999999999999999999999999999999999e+6144";
  * The differential suite's PRNG draws exponents from [-50, 50] and structurally
  * cannot reach any of these.
  */
-const FINITE_EDGES = [
+export const FINITE_EDGES = [
   "0",
   "-0",
   "1",
