@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { add, divide, from, multiply, remainder, subtract } from "@/index";
 import type { RoundingMode } from "@/index";
 import { normalizeLiteral, sameValue, toOperandInput } from "./normalize";
@@ -84,7 +84,12 @@ function runFile(name: string): { tally: Tally; failures: string[] } {
 }
 
 describe.each(Object.keys(PINNED))("%s.decTest", (name) => {
-  const { tally, failures } = runFile(name);
+  let tally: Tally;
+  let failures: string[];
+
+  beforeAll(() => {
+    ({ tally, failures } = runFile(name));
+  });
 
   it("matches every runnable vector by value", () => {
     expect(failures).toEqual([]);
