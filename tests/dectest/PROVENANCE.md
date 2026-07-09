@@ -36,6 +36,16 @@ never redistributed in the published npm tarball.
 
 ## Refresh
 
-Re-run the `curl` loop in `docs/superpowers/plans/2026-07-09-dectest-kat-property-testing.md`
-Task 1 against a newer tag, then update the checksums and the pinned counts in
-`tests/dectest/dectest.test.ts`.
+Re-fetch from a newer CPython tag, then update the checksums above and the pinned
+skip tallies in `tests/dectest/dectest.test.ts`:
+
+```bash
+for f in dqAdd dqSubtract dqMultiply dqDivide dqRemainder; do
+  curl -fsS -o "tests/dectest/$f.decTest" \
+    "https://raw.githubusercontent.com/python/cpython/vX.Y.Z/Lib/test/decimaltestdata/$f.decTest"
+done
+shasum -a 256 tests/dectest/*.decTest
+```
+
+`tests/dectest/.gitattributes` pins these files as binary (`*.decTest -text`) so Git's
+`core.autocrlf` cannot rewrite their line endings and invalidate the checksums above.
