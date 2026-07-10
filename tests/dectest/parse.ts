@@ -23,9 +23,20 @@ export interface DecTestCase {
 const TOKEN_RE = /'[^']*'|"[^"]*"|\S+/g;
 const DIRECTIVE_RE = /^(\w+):\s*(.*)$/;
 
+/** A `--` only opens a comment outside quotes: `compare '--' "a--b"` carries two literal operands. */
 function stripComment(line: string): string {
-  const at = line.indexOf("--");
-  return (at >= 0 ? line.slice(0, at) : line).trim();
+  let quote = "";
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (quote) {
+      if (ch === quote) quote = "";
+    } else if (ch === "'" || ch === '"') {
+      quote = ch;
+    } else if (ch === "-" && line[i + 1] === "-") {
+      return line.slice(0, i).trim();
+    }
+  }
+  return line.trim();
 }
 
 function unquote(token: string): string {
