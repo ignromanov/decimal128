@@ -35,6 +35,9 @@ jobs:
       - name: Tree-shaking size guard
         run: pnpm size-check
 
+      - name: Packaging + type-resolution guard
+        run: pnpm check:pack
+
       # Coverage is observability, not correctness: a Codecov outage or a missing
       # CODECOV_TOKEN must never fail `test`, which branch protection gates merges on.
       - name: Upload coverage to Codecov
