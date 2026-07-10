@@ -208,9 +208,10 @@ The four `to*` string formatters and `toNumber` return a `string`/`number`, not 
 <details>
 <summary><b>Intentional divergences</b> — where output differs from the reference oracle, and why</summary>
 
-Every point where this library's output differs from the reference oracle
-(`proposal-decimal`, the TC39 champion polyfill the differential suite tests against) is either
-a bug or a deliberate, documented decision. These are the deliberate ones:
+Every point where this library's output differs from a reference oracle — `proposal-decimal`
+(the TC39 champion polyfill the differential suite tests against) or the IBM decTest vectors
+(the known-answer suite in `tests/dectest/`) — is either a bug or a deliberate, documented
+decision. These are the deliberate ones:
 
 | Divergence | This library | Reference / oracle | Why |
 |---|---|---|---|
@@ -218,6 +219,7 @@ a bug or a deliberate, documented decision. These are the deliberate ones:
 | **`pow`** | Provided: integer exponent, rounds once per multiply step; negative exponent throws `INVALID_EXPONENT`. | TC39 `Decimal` defines no `pow`. | A common need, offered as a clearly namespaced extension rather than left out. |
 | **`compare` (total order) vs `equals` (IEEE)** | `compare` is a *total* order — `NaN` sorts last and equals itself — so values are sortable. `equals`/`lt`/`lte`/`gt`/`gte` keep strict IEEE (`NaN ≠ NaN`). | IEEE defines only the (partial) predicate semantics. | Sorting needs a total order; IEEE predicates need IEEE semantics. Both are provided under distinct names, never conflated. |
 | **`toString` notation threshold** | Scientific notation only outside `[1e-6, 1e34)`. | The polyfill mimics legacy JS `Number.toString` thresholds (exponent ≥ 21 or ≤ -7). | A decimal-appropriate threshold. This is a *notation* choice, not a *value* difference — the differential suite re-threads the polyfill's output through our own `toString` so it compares values, not notation. |
+| **Quantum (cohorts)** | No quantum. `2`, `2.0` and `2.00` are one value: `from("1.50") === "1.5"`, `add("1.0","1.0") === "2"`. | IEEE 754-2019 / IBM GDA give each cohort member a distinct quantum and specify the result's quantum (`1.0 + 1.0 → 2.0`). The `proposal-decimal` polyfill normalizes exactly as we do. | The TC39 `Decimal` type this library implements has no quantum. Consequence: the decTest suite compares by *value*, and `quantize`/`canonical`/the decimal128 encodings are out of scope — they mean nothing for a type without quanta. |
 
 </details>
 
@@ -252,13 +254,18 @@ years of field use. A few things worth knowing before you adopt it:
   behaves identically) but differs from an arbitrary-precision decimal such as Python's `decimal`
   or decNumber, which keep the operand exact and round only the in-range result. Operand parsing
   always uses `halfEven`; a per-operation `roundingMode` applies to the result, not to ingest.
-- **Correctness is differential-tested.** The test suite runs 2000+ seeded input pairs against
-  `proposal-decimal`, the TC39 champion's own reference polyfill, and asserts parity across
-  arithmetic, rounding, comparison, and formatting. That comparison surfaced concrete points
-  where the polyfill diverges from strict IEEE 754 behavior — no subnormal support, differences
-  in signed-zero and division-by-zero handling, and remainder precision on large operands — which
-  this library handles per-spec instead. That's offered as measured evidence of what the test
-  suite actually caught, not a claim of superiority to the proposal itself.
+- **Correctness is tested from three independent angles.** The test suite runs 2000+ seeded
+  input pairs against `proposal-decimal`, the TC39 champion's own reference polyfill, and
+  asserts parity across arithmetic, rounding, comparison, and formatting. That comparison
+  surfaced concrete points where the polyfill diverges from strict IEEE 754 behavior — no
+  subnormal support, differences in signed-zero and division-by-zero handling, and remainder
+  precision on large operands — which this library handles per-spec instead. That's offered as
+  measured evidence of what the test suite actually caught, not a claim of superiority to the
+  proposal itself. Alongside the differential suite, a known-answer suite runs 2912 vectors from
+  IBM's `dq*` decTest files through the public API and compares by value. And an oracle-free set
+  of metamorphic property tests runs over a boundary-dense generator that reaches subnormals
+  (`1e-6176`), max-normal, and exact ties — the range the differential suite's PRNG structurally
+  cannot reach.
 
 ---
 

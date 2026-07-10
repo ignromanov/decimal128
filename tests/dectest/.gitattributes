@@ -1,0 +1,6 @@
+# Vendored IBM decTest fixtures must stay byte-identical to upstream so the
+# checksums recorded in PROVENANCE.md remain verifiable. Without this, git's
+# core.autocrlf=input setting silently rewrites their CRLF line endings to LF
+# on commit, which would make the documented sha256 checksums wrong for anyone
+# who clones the repo fresh.
+*.decTest -text
