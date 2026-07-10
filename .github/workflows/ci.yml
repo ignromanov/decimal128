@@ -38,7 +38,7 @@ jobs:
       # Coverage is observability, not correctness: a Codecov outage or a missing
       # CODECOV_TOKEN must never fail `test`, which branch protection gates merges on.
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage-final.json
