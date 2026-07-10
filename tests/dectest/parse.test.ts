@@ -48,6 +48,11 @@ describe("parseDecTest", () => {
     expect(cases[0]).toMatchObject({ expected: "2", conditions: [] });
   });
 
+  it("treats a double dash inside a quoted operand as data, not a comment", () => {
+    const cases = parseDecTest(`dqcom001 compare '--' "a--b" -> -1  -- quoted dashes\n`);
+    expect(cases[0]).toMatchObject({ operands: ["--", "a--b"], expected: "-1", conditions: [] });
+  });
+
   it("records the source line for failure messages", () => {
     expect(parseDecTest(SAMPLE)[0].line).toBe(11);
   });
