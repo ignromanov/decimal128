@@ -35,9 +35,11 @@ jobs:
       - name: Tree-shaking size guard
         run: pnpm size-check
 
+      # Coverage is observability, not correctness: a Codecov outage or a missing
+      # CODECOV_TOKEN must never fail `test`, which branch protection gates merges on.
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage-final.json
-          fail_ci_if_error: true
+          fail_ci_if_error: false
