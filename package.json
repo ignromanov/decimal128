@@ -81,7 +81,7 @@
     "esbuild": "^0.28.1",
     "fast-check": "4.9.0",
     "proposal-decimal": "20250613.0.0",
-    "publint": "^0.3.21",
+    "publint": "^0.3.22",
     "typescript": "~5.9.2",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
