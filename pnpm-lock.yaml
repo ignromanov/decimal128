@@ -27,8 +27,8 @@ importers:
         specifier: ^0.28.2
         version: 0.28.2
       fast-check:
-        specifier: 4.10.0
-        version: 4.10.0
+        specifier: 4.10.2
+        version: 4.10.2
       proposal-decimal:
         specifier: 20250613.0.0
         version: 20250613.0.0
@@ -751,8 +751,8 @@ packages:
     resolution: {integrity: sha512-JhFGDVJ7tmDJItKhYgJCGLOWjuK9vPxiXoUFLwLDc99NlmklilbiQJwoctZtt13+xMw91MCk/REan6MWHqDjyA==}
     engines: {node: '>=12.0.0'}
 
-  fast-check@4.10.0:
-    resolution: {integrity: sha512-hhqQL+IJllZi3aM4TKvmCj3bywLEcycNTTLZeLhA9ttMxBrCqM07q7Di4kl+j9EWSTXvJH1+EpIgsDbF/+8H5Q==}
+  fast-check@4.10.2:
+    resolution: {integrity: sha512-iK2f+YrcmoeGqk6fA0ea2bptcu/itMIm4NfEozq6N25+aG6h7s5HZbB/k1aV7b5w5sFLMCbbtRUsTVR+BgC3xw==}
     engines: {node: '>=12.17.0'}
 
   fdir@6.5.0:
@@ -1787,7 +1787,7 @@ snapshots:
 
   expect-type@1.2.2: {}
 
-  fast-check@4.10.0:
+  fast-check@4.10.2:
     dependencies:
       pure-rand: 8.4.2
 
